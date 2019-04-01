@@ -302,6 +302,10 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private onMousedown = (event: any) => {
     // console.log('PanZoomComponent: onMousedown()', event);
+    
+    if (this.animationParams || this.zoomLevelIsChanging) {
+      return;
+    }
 
     if (event.button === this.dragMouseButton || event.type === 'touchstart') {
       event.preventDefault();
@@ -310,10 +314,13 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dragFinishing = false;
       this.panVelocity = null;
 
+      const pageX = event.pageX || event.changedTouches[0].pageX;
+      const pageY = event.pageY || event.changedTouches[0].pageY;
+
       if (this.config.panOnClickDrag) {
         this.previousPosition = {
-          x: event.pageX,
-          y: event.pageY
+          x: pageX,
+          y: pageY
         };
         this.lastMouseEventTime = event.timeStamp;
         this.isDragging = true;
@@ -373,11 +380,20 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     let now = event.timeStamp;
     let timeSinceLastMouseEvent = (now - this.lastMouseEventTime) / 1000; // orig
     // let timeSinceLastMouseEvent = (now - this.lastMouseEventTime);
+
+    if (!timeSinceLastMouseEvent || this.zoomLevelIsChanging) {
+      return;
+    }
+
     this.lastMouseEventTime = now;
+
+    const pageX = event.pageX || event.changedTouches[0].pageX;
+    const pageY = event.pageY || event.changedTouches[0].pageY;
+
     let dragDelta = {
       // a representation of how far each coordinate has moved since the last time it was moved
-      x: event.pageX - this.previousPosition.x,
-      y: event.pageY - this.previousPosition.y
+      x: pageX - this.previousPosition.x,
+      y: pageY - this.previousPosition.y
     };
 
     if (this.config.keepInBounds) {
@@ -439,8 +455,8 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     // console.log(`PanZoomComponent: onMouseMove(): panVelocity:`, this.panVelocity);
 
     this.previousPosition = {
-      x: event.pageX,
-      y: event.pageY
+      x: pageX,
+      y: pageY
     };
 
   }
@@ -453,6 +469,9 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // event.preventDefault();
     // event.stopPropagation();
+    if (this.animationParams) {
+      return;
+    }
 
     if (event.touches.length === 1) {
       // single touch, emulate mouse move
@@ -504,7 +523,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
   private onMouseUp = (event) => {
     // console.log('PanZoomComponent: onMouseup()', event);
 
-    if (event.button !== this.dragMouseButton) {
+    if (event.button !== this.dragMouseButton && event.type !== 'touchend') {
       return;
     }
 
@@ -758,7 +777,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     ////////////////////////////////////////////////////
     if (this.animationParams || this.isFirstSync) {
       let scale = this.getCssScale(this.model.zoomLevel);
-      let scaleString = `scale(${scale})`;
+      let scaleString = `scale3d(${scale}, ${scale}, ${scale})`;
       this.zoomElementRef.nativeElement.style.transformOrigin = '0 0';
       this.zoomElementRef.nativeElement.style.transform = scaleString;
     }

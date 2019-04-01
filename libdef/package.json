@@ -1,5 +1,5 @@
 {
-  "name": "ng2-panzoom",
+  "name": "pik-panzoom",
   "author": "Tim Underhay",
   "license": "MIT",
   "homepage": "https://github.com/kensingtontech/ng2-panzoom",
@@ -7,7 +7,10 @@
     "type": "git",
     "url": "https://github.com/KensingtonTech/ng2-panzoom.git"
   },
-  "version": "2.1.1",
+  "publishConfig": {
+    "registry": "http://npmjs.pik.ru"
+  },
+  "version": "2.1.11",
   "dependencies": {
     "jquery": "^3.3.1"
   },

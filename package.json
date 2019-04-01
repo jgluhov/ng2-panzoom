@@ -1,5 +1,5 @@
 {
-  "name": "ng2-panzoom",
+  "name": "pik-panzoom",
   "version": "0.0.0",
   "author": "Tim Underhay",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "e2e": "ng e2e",
     "buildpack": "rm -rf dist/ && ng build --prod && cd dist/lib && npm pack .",
     "buildpublish": "rm -rf dist/ && ng build --prod && cd dist/lib && npm publish .",
-    "builddemotest": "rm -rf dist/ && ng build --prod && cd dist/lib && npm pack . && cp ng2-panzoom-*.tgz ~/src/ng2-panzoom-demo && cd ~/src/ng2-panzoom-demo && npm install ng2-panzoom-2.1.1.tgz"
+    "builddemotest": "rm -rf dist/ && ng build --prod && cd dist/lib && npm pack . && cp pik-panzoom-*.tgz ~/src/pik-panzoom-demo && cd ~/src/pik-panzoom-demo && npm install pik-panzoom-2.1.11.tgz"
   },
   "private": true,
   "dependencies": {

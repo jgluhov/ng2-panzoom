@@ -1,4 +1,4 @@
-# ng2-panzoom
+# pik-panzoom
 
 An Angular directive for panning and zooming an element or elements using the mouse and mousewheel.  Provides basic support for touchscreens, though it can still do with improvement.  It was adapted from the angular-pan-zoom library for AngularJS, but it has been heavily modified.  Many thanks go out to Martin Vindahl Olsen for having written it, and for his blessing in this undertaking.
 
@@ -57,7 +57,7 @@ Version 2.0 brings enhanced performance, makes adjustments for modern hardware a
 ## Installation
 
 ```
-npm install ng2-panzoom --save
+npm install pik-panzoom --save
 ```
 
 ### angular.json:
@@ -75,7 +75,7 @@ npm install ng2-panzoom --save
 
 ### app.module.ts:
 ```typescript
-import { Ng2PanZoomModule } from 'ng2-panzoom';
+import { Ng2PanZoomModule } from 'pik-panzoom';
 
 @NgModule({
   imports: [  ...,
@@ -100,7 +100,7 @@ It also exposes an API which can be used to interact with the pan/zoom view.  Th
 Be sure to place your pan-zoom component underneath an element with a definite height/width, like an absolute-positioned div.  You may not see anything if you don't do this.
 
 ```typescript
-import { PanZoomConfig, PanZoomAPI, PanZoomModel } from 'ng2-panzoom';
+import { PanZoomConfig, PanZoomAPI, PanZoomModel } from 'pik-panzoom';
 
 @Component({
   selector: 'my-component'
@@ -214,7 +214,7 @@ interface Rect {
 The panzoom API is exposed through an RXJS observable as a property of the `PanZoomConfig` class, named `api`, to which you simply subscribe to obtain the API object.  The subscription callback method will be passed the API as its only parameter, of type `PanZoomAPI`.  Because it uses a BehaviorSubject, the callback will immediately trigger when subscribed to, assuming panzoom has already been initialised.  If panzoom hasn't yet been initialised, the subscription callback will fire as soon as initialisation occurs.
 
 ```typescript
-import { PanZoomConfig, PanZoomAPI, PanZoomModel } from 'ng2-panzoom';
+import { PanZoomConfig, PanZoomAPI, PanZoomModel } from 'pik-panzoom';
 import { Subscription } from 'rxjs';
 
 @Component({ ... })
@@ -248,7 +248,7 @@ The PanZoomConfig class has an RXJS observable (`modelChanged`) which can be use
 
 ### Example modelChanged Subscription
 ```typescript
-import { PanZoomConfig, PanZoomAPI, PanZoomModel } from 'ng2-panzoom';
+import { PanZoomConfig, PanZoomAPI, PanZoomModel } from 'pik-panzoom';
 
 @Component({ ... })
 

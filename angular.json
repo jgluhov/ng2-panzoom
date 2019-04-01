@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "",
   "projects": {
-    "ng2-panzoom": {
+    "pik-panzoom": {
       "root": "libdef",
       "sourceRoot": "src",
       "projectType": "library",
@@ -36,5 +36,5 @@
       }
     }
   },
-  "defaultProject": "ng2-panzoom"
+  "defaultProject": "pik-panzoom"
 }
