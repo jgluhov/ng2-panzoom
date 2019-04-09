@@ -304,7 +304,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
   private onMousedown = (event: any) => {
     // console.log('PanZoomComponent: onMousedown()', event);
 
-    if (this.animationParams || this.zoomLevelIsChanging) {
+    if (this.animationParams) {
       return;
     }
 
@@ -362,10 +362,11 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     // console.log('PanZoomComponent: onTouchStart()', event);
     // console.log('PanZoomComponent: onTouchStart(): touches:', event.touches.length);
 
+    event.preventDefault();
+
     if (this.animationParams) {
       return;
     }
-    event.preventDefault();
     // event.stopPropagation();
 
     if (event.touches.length !== 1) {
@@ -400,7 +401,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     let timeSinceLastMouseEvent = (now - this.lastMouseEventTime) / 1000; // orig
     // let timeSinceLastMouseEvent = (now - this.lastMouseEventTime);
 
-    if (!timeSinceLastMouseEvent || this.animationParams || this.zoomLevelIsChanging) {
+    if (!timeSinceLastMouseEvent || this.animationParams) {
       return;
     }
 
@@ -542,8 +543,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
   private onMouseUp = (event) => {
     // console.log('PanZoomComponent: onMouseup()', event);
 
-    if (this.animationParams || this.zoomLevelIsChanging) {
-      event.preventDefault();
+    if (this.animationParams) {
       return this.freeze();
     }
 
