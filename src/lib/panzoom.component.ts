@@ -134,8 +134,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
       panDelta: this.panDelta.bind(this),
       panDeltaPercent: this.panDeltaPercent.bind(this),
       panDeltaAbsolute: this.panDeltaAbsolute.bind(this),
-      freeze: this.freeze.bind(this),
-      animationParams: this.animationParams
+      freeze: this.freeze.bind(this)
     };
 
     this.config.api.next(this.api);
@@ -544,6 +543,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     // console.log('PanZoomComponent: onMouseup()', event);
 
     if (this.animationParams || this.zoomLevelIsChanging) {
+      event.preventDefault();
       return this.freeze();
     }
 

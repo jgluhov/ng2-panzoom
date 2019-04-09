@@ -16,5 +16,4 @@ export interface PanZoomAPI {
   panDeltaPercent: Function;
   panDeltaAbsolute: Function;
   freeze: Function;
-  animationParams: object;
 }
