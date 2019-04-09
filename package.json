@@ -20,14 +20,15 @@
   "private": true,
   "dependencies": {
     "@angular/common": "^6.1.0",
-    "@angular/core": "^6.1.0",
     "@angular/compiler": "^6.1.0",
+    "@angular/core": "^6.1.0",
     "@angular/platform-browser": "^6.1.0",
     "@angular/platform-browser-dynamic": "^6.1.0",
     "core-js": "^2.5.4",
+    "jquery": "^3.3.1",
+    "lodash": "^4.17.11",
     "rxjs": "~6.2.0",
-    "zone.js": "~0.8.26",
-    "jquery": "^3.3.1"
+    "zone.js": "~0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.8.0",
@@ -37,8 +38,8 @@
     "@angular/language-service": "^6.1.0",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
-    "@types/node": "~8.9.4",
     "@types/jquery": "^3.0.0",
+    "@types/node": "~8.9.4",
     "codelyzer": "~4.3.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",

@@ -133,7 +133,9 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
       panToPoint: this.panToPoint.bind(this),
       panDelta: this.panDelta.bind(this),
       panDeltaPercent: this.panDeltaPercent.bind(this),
-      panDeltaAbsolute: this.panDeltaAbsolute.bind(this)
+      panDeltaAbsolute: this.panDeltaAbsolute.bind(this),
+      freeze: this.freeze.bind(this),
+      animationParams: this.animationParams
     };
 
     this.config.api.next(this.api);
@@ -302,7 +304,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private onMousedown = (event: any) => {
     // console.log('PanZoomComponent: onMousedown()', event);
-    
+
     if (this.animationParams || this.zoomLevelIsChanging) {
       return;
     }
@@ -341,11 +343,29 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
 
+  freeze() {
+    this.isDragging = false;
+    this.model.isPanning = false;
+
+    if (this.isMobile) {
+      this.zone.runOutsideAngular( () => document.removeEventListener('touchend', this.onTouchEnd) );
+      this.zone.runOutsideAngular( () => document.removeEventListener('touchmove', this.onTouchMove, <any>{ passive: true, capture: false } ) );
+    }
+    else {
+      this.zone.runOutsideAngular( () => document.removeEventListener('mousemove', this.onMouseMove, <any>{ passive: true, capture: false } ));
+      this.zone.runOutsideAngular( () => document.removeEventListener('mouseup', this.onMouseUp, <any>{ passive: true } ));
+    }
+  }
+
+
 
   private onTouchStart = (event: TouchEvent) => {
     // console.log('PanZoomComponent: onTouchStart()', event);
     // console.log('PanZoomComponent: onTouchStart(): touches:', event.touches.length);
 
+    if (this.animationParams) {
+      return;
+    }
     event.preventDefault();
     // event.stopPropagation();
 
@@ -381,7 +401,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     let timeSinceLastMouseEvent = (now - this.lastMouseEventTime) / 1000; // orig
     // let timeSinceLastMouseEvent = (now - this.lastMouseEventTime);
 
-    if (!timeSinceLastMouseEvent || this.zoomLevelIsChanging) {
+    if (!timeSinceLastMouseEvent || this.animationParams || this.zoomLevelIsChanging) {
       return;
     }
 
@@ -464,8 +484,8 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   private onTouchMove = (event: any) => {
-    // console.log('PanZoomComponent: onTouchMove()');
-    // console.log('PanZoomComponent: onTouchMove(): event:', event);
+    console.log('PanZoomComponent: onTouchMove()');
+    console.log('PanZoomComponent: onTouchMove(): event:', event);
 
     // event.preventDefault();
     // event.stopPropagation();
@@ -479,7 +499,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     else {
       // multiple touches, zoom in/out
-      // console.log('pinch zooming');
+      console.log('pinch zooming');
 
       // Calculate x and y distance between touch events
       let x = event.touches[0].pageX - event.touches[1].pageX;
@@ -508,7 +528,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       this.lastClickPoint = clickPoint;
 
-      this.changeZoomLevel( this.base.zoomLevel + delta * 0.0001, clickPoint);
+      this.changeZoomLevel( this.base.zoomLevel + delta * 0.00001, clickPoint, 0.01);
       // this.freeZoom( clickPoint, delta);
 
       // Update length for next move event
@@ -522,6 +542,10 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private onMouseUp = (event) => {
     // console.log('PanZoomComponent: onMouseup()', event);
+
+    if (this.animationParams || this.zoomLevelIsChanging) {
+      return this.freeze();
+    }
 
     if (event.button !== this.dragMouseButton && event.type !== 'touchend') {
       return;
@@ -1258,8 +1282,8 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 
-  private changeZoomLevel(newZoomLevel: number, clickPoint: Point) {
-    // console.log('PanZoomComponent: changeZoomLevel()');
+  private changeZoomLevel(newZoomLevel: number, clickPoint: Point, duration = this.config.zoomStepDuration) {
+    console.log('PanZoomComponent: changeZoomLevel()');
 
     if (this.animationParams) {
       // let's let any current animation just finish
@@ -1269,11 +1293,12 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     this.zoomLevelIsChanging = true;
 
     // keep zoom level in bounds
-    newZoomLevel = Math.max(this.minimumAllowedZoomLevel, newZoomLevel);
-    newZoomLevel = Math.min(this.config.zoomLevels - 1, newZoomLevel);
-    // console.log('newZoomLevel:', newZoomLevel);
+    // newZoomLevel = Math.max(this.minimumAllowedZoomLevel, newZoomLevel);
+    // newZoomLevel = Math.min(this.config.zoomLevels - 1, newZoomLevel);
+    console.log('newZoomLevel:', newZoomLevel);
 
     let deltaZoomLevel = newZoomLevel - this.base.zoomLevel; // deltaZoomLevel is the number of zoom levels we are changing here
+    console.log('deltaZoomLevel:', deltaZoomLevel);
     if (!deltaZoomLevel) {
       // a deltaZoomLevel of zero means that we aren't changing zoom, because we're either zoomed all the way in or all the way out
       return;
@@ -1333,7 +1358,7 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
       deltaZoomLevel: deltaZoomLevel, // the destination zoom level for this zoom operation (when the animation is completed)
       panStepFunc: panStepFunc,
       // duration: this.config.zoomStepDuration, // how long the animation should take
-      duration: this.config.zoomStepDuration * 1000, // how long the animation should take
+      duration: duration * 1000, // how long the animation should take
       progress: 0.0
     };
     this.startAnimation();

@@ -48,7 +48,9 @@ export class PanZoomConfig {
     panToPoint: null,
     panDelta: null,
     panDeltaPercent: null,
-    panDeltaAbsolute: null
+    panDeltaAbsolute: null,
+    freeze: null,
+    animationParams: null
   });
 
 
