@@ -10,13 +10,13 @@
   "publishConfig": {
     "registry": "http://npmjs.pik.ru"
   },
-  "version": "2.1.46",
+  "version": "2.1.48",
   "dependencies": {
     "jquery": "^3.3.1"
   },
   "peerDependencies": {
-    "@angular/common": "^6.1.0",
-    "@angular/core": "^6.1.0"
+    "@angular/common": "^7.2.8",
+    "@angular/core": "^7.2.8"
   },
   "devDependencies": {
     "@types/jquery": "^3.0.0"
