@@ -27,6 +27,7 @@ export class PanZoomConfig {
   zoomToFitZoomLevelFactor = 0.95;
   freeMouseWheel = true;
   freeMouseWheelFactor = 0.08;
+  freeMousePinchWheelMultiplier = 4.5;
   modelChanged: BehaviorSubject<PanZoomModel> = new BehaviorSubject<PanZoomModel>({
     isPanning: null,
     zoomLevel: null,

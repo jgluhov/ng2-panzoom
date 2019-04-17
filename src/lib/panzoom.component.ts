@@ -4,6 +4,7 @@ import { Point } from './panzoom-point';
 import { PanZoomModel } from './panzoom-model';
 import { PanZoomAPI } from './panzoom-api';
 import { Rect } from './panzoom-rect';
+import { throttle } from 'lodash';
 declare var $: any;
 
 /*
@@ -198,6 +199,9 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     this.zone.runOutsideAngular( () => this.animationFrameFunc = window.requestAnimationFrame );
     // this.zone.runOutsideAngular( () => this.wheelAnimationFrameFunc = window.requestAnimationFrame );
 
+    const handleMouseWheel = throttle((event) => {
+      this.animationFrameFunc( () => this.onMouseWheel(event));
+    }, 30);
 
     if (this.isMobileDevice()) {
       this.isMobile = true;
@@ -206,7 +210,12 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     else {
       this.zone.runOutsideAngular( () => this.frameElementRef.nativeElement.addEventListener('mousedown', this.onMousedown ) );
       this.zone.runOutsideAngular( () => this.frameElementRef.nativeElement.addEventListener('dblclick', this.onDblClick ) );
-      this.zone.runOutsideAngular( () => this.frameElementRef.nativeElement.addEventListener('wheel', (event) => this.animationFrameFunc( () => this.onMouseWheel(event) ), { passive: true } ) );
+      this.zone.runOutsideAngular( () => {
+        this.frameElementRef.nativeElement.addEventListener('wheel', (event) => {
+          event.preventDefault();
+          handleMouseWheel(event);
+        });
+      });
     }
 
   }
@@ -268,8 +277,12 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
         return; // already zooming
       }
 
-      if (!this.config.invertMouseWheel) {
+      if (this.config.invertMouseWheel || event.ctrlKey) {
         deltaY = -deltaY;
+      }
+
+      if (event.ctrlKey) {
+        deltaY *= this.config.freeMousePinchWheelMultiplier;
       }
 
       // console.log('deltaY:', event.deltaY);
@@ -327,14 +340,16 @@ export class PanZoomComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isDragging = true;
         this.model.isPanning = false;
 
-        if (this.isMobile) {
-          this.zone.runOutsideAngular( () => document.addEventListener('touchend', this.onTouchEnd, false ) ); // leave this on document
-          this.zone.runOutsideAngular( () => document.addEventListener('touchmove', this.onTouchMove, { passive: true, capture: false } ) ); // leave this on document
-        }
-        else {
-          this.zone.runOutsideAngular( () => document.addEventListener('mousemove', this.onMouseMove, { passive: true, capture: false } ) ); // leave this on document
-          this.zone.runOutsideAngular( () => document.addEventListener('mouseup', this.onMouseUp ) ); // leave this on document
-        }
+        setTimeout(() => {
+          if (this.isMobile) {
+            this.zone.runOutsideAngular( () => document.addEventListener('touchend', this.onTouchEnd, false ) ); // leave this on document
+            this.zone.runOutsideAngular( () => document.addEventListener('touchmove', this.onTouchMove, { passive: true, capture: false } ) ); // leave this on document
+          }
+          else {
+            this.zone.runOutsideAngular( () => document.addEventListener('mousemove', this.onMouseMove, { passive: true, capture: false } ) ); // leave this on document
+            this.zone.runOutsideAngular( () => document.addEventListener('mouseup', this.onMouseUp ) ); // leave this on document
+          }
+        });
       }
 
       return false;

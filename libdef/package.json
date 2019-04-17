@@ -10,7 +10,7 @@
   "publishConfig": {
     "registry": "http://npmjs.pik.ru"
   },
-  "version": "2.1.48",
+  "version": "2.1.55",
   "dependencies": {
     "jquery": "^3.3.1"
   },
